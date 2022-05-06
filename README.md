@@ -38,10 +38,12 @@ This tool uses hairpin and mature sequences from mirbase (version?). Both of the
 
 ### Syntax
 
-Check the help document for syntax information:
+Check the help document for syntax information: 
+
     stack-to-base.py -h
     
-The tool simply takes the Results.txt output from a ShortStack run and the genome used to perform the annotation. An output name is supplied to handle intermediate files.
+The tool simply takes the Results.txt output from a ShortStack run and the genome used to perform the annotation. An output name is supplied to handle intermediate files. 
+
     stack-to-base.py -r example/Results.txt -g ~/+Genomes/Plant_genomes/Solyc.chromosomes.4.00.fa -o test_output
 
 
