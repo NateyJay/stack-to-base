@@ -1,10 +1,10 @@
 # stack-to-base
  A tool to search ShortStack sRNA annotations against miRBase
  
-#### A warning
+### ...A warning
 This tool is in development, it is likely that many of the options and outputs may change. There are many bugs still being worked out.
 
-#### Why and how does it work
+### Why and how does it work
 [ShortStack](https://github.com/MikeAxtell/ShortStack) is a powerful tool for sRNA-seq analysis. It produces an annotation, including high-precision predictions of miRNAs. However, precision comes with a trade-off of sensitivity and loci which contain miRNAs may not always be identified as such. It can also be useful to find family names associated with a sRNA locus. This tool is meant to bridge that gap and help identify loci that might be overlooked otherwise.
 
 This tool uses 3 approaches to search for miRBase miRNA loci all with varying degrees of sensitivity.
@@ -14,11 +14,11 @@ This tool uses 3 approaches to search for miRBase miRNA loci all with varying de
 
 Using these 3 approaches, it can find what family members are most similar to a locus and give a strong inference what miRNA families might be contained in a locus.
 
-#### More warnings...
+### More warnings...
 • MiRBase is not perfect. As of now this tool includes low-confidence miRNAs. These annotations should be considered miRNAs at the user's peril - many of them are likely false.
 • This will likely be only specific to the family of a miRNA. Any species information or paralog information should be disregarded - they mean nothing in the context of this tool. So, a hit that said Ath-miR166b when you are working in A. lyrata, is not evidence of horizontal gene transfer... You should only trust this as far as this is a miR166-family miRNA.
 
-#### Installation dependencies
+### Installation dependencies
 all of these software must be executable and in the $PATH variable
 • samtools
 • bedtools
@@ -31,12 +31,12 @@ Past these, there is no installation. Simply run the stack-to-base.py script. To
     chmod +x ./stack-to.base.py
 
 
-#### Input data
+### Input data
 
 This tool uses hairpin and mature sequences from mirbase (version?). Both of these files have been supplied in the github repo and stack-to-base.py should recognize their location if the script is in the repo directory. Otherwise, you can specify their location manually.
 
 
-#### Syntax
+### Syntax
 
 Check the help document for syntax information:
     stack-to-base.py -h
