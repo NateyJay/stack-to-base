@@ -36,7 +36,7 @@ parser.add_argument('-m', '--mirbase_mature_file',
 parser.add_argument('-o', '--output_name', 
 	type=str,
 	required=True,
-	help='to be filled...')
+	help='prefix used for intermediate files and amended results')
 parser.add_argument('-s', '--species_prefix', 
 	type=str,
 	required=False,
