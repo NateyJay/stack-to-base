@@ -7,6 +7,7 @@ import argparse
 from pprint import pprint
 from subprocess import Popen, PIPE
 from math import floor
+import os
 
 from os.path import isfile, dirname
 
@@ -19,72 +20,111 @@ parser.add_argument('-r', '--results_file',
 	type=str,
 	required=True,
 	help='shortstack results file')
+
 parser.add_argument('-g', '--genome_file', 
 	type=str,
 	required=True,
 	help='genome used for shortstack run')
-parser.add_argument('-p', '--mirbase_hairpin_file', 
+
+parser.add_argument('-p', '--hairpin_files', 
 	type=str,
+	nargs='+',
 	default = f"{script_dir}/miRBase_files/hairpin.fa",
 	required=False,
 	help='mirbase hairpin sequences in fasta format')
-parser.add_argument('-m', '--mirbase_mature_file', 
+
+parser.add_argument('-m', '--mature_files', 
 	type=str,
+	nargs='+',
 	default = f"{script_dir}/miRBase_files/mature.fa",
 	required=False,
 	help='mirbase mature sequences in fasta format')
-parser.add_argument('-o', '--output_name', 
-	type=str,
-	required=True,
-	help='prefix used for intermediate files and amended results')
-parser.add_argument('-s', '--species_prefix', 
+
+parser.add_argument('-o', '--output_dir', 
 	type=str,
 	required=False,
-	default = False,
-	help='3 character species prefix if you wish to pre-filter the mirbase hairpin')
+	help='prefix used for intermediate files and amended results')
+
+# parser.add_argument('-s', '--species_prefix', 
+# 	type=str,
+# 	required=False,
+# 	default = False,
+# 	help='3 character species prefix if you wish to pre-filter the mirbase hairpin')
 
 
 
 args = parser.parse_args()
-results_file = args.results_file
-genome_file  = args.genome_file
-hairpin_file = args.mirbase_hairpin_file
-mature_file  = args.mirbase_mature_file
-output_name  = args.output_name
-species      = args.species_prefix
+results_file  = args.results_file
+genome_file   = args.genome_file
+hairpin_files = args.hairpin_files
+mature_files  = args.mature_files
+output_dir    = args.output_dir
+# species       = args.species_prefix
+
+
+def get_stamp():
+	from time import time
+	from datetime import datetime
+	from math import floor
+	ts = time()
+	st = datetime.fromtimestamp(ts).strftime('%Y%m%d')
+	stamp = "{}-{}".format(st, str(floor(ts))[-6:])
+	return(stamp)
+
+if not output_dir:
+	output_dir = f'stack-to-base_{get_stamp()}'
+
+output_dir = output_dir.rstrip("/")
+
+os.mkdir(output_dir)
+
+
+# if species:
+# 	filtered_hp_file = f"{output_dir}/filtered_hps.fa"
+
+# 	if not isfile(filtered_hp_file):
+
+# 		with open(filtered_hp_file, 'w') as outf:
+# 			with open(hairpin_file, 'r') as f:
+# 				to_out = False
+# 				for line in f:
+# 					if line[0] == '>':
+# 						if f">{species}" in line:
+# 							to_out = True
+# 							print(line.strip(), file=outf)
+# 						else:
+# 							to_out = False
+
+# 					elif to_out:
+# 						print(line.strip(), file=outf)
+
+# 	hairpin_file = filtered_hp_file
+
+
+def merge_fastas(ls, name):
+	if len(ls) == 1:
+		return(ls[1])
+	else:
+		fasta_file = f"{output_dir}/merged.{name}.fa"
+		with open(fasta_file, 'w') as outf:
+			for in_fasta in ls:
+				with open(in_fasta, 'r') as f:
+					for line in f:
+						line = line.strip()
+
+						print(line, file=outf)
+	return(fasta_file)
+
+hairpin_file = merge_fastas(hairpin_files, 'hairpin')
+mature_file  = merge_fastas(mature_files, 'mature')
 
 
 
 
-
-
-if species:
-	filtered_hp_file = f"{output_name}.filtered_hps.fa"
-
-	if not isfile(filtered_hp_file):
-
-		with open(filtered_hp_file, 'w') as outf:
-			with open(hairpin_file, 'r') as f:
-				to_out = False
-				for line in f:
-					if line[0] == '>':
-						if f">{species}" in line:
-							to_out = True
-							print(line.strip(), file=outf)
-						else:
-							to_out = False
-
-					elif to_out:
-						print(line.strip(), file=outf)
-
-	hairpin_file = filtered_hp_file
-
-
-# print(hairpin_file)
-
+## Performing BLAT alignment to genome for hairpins and looking for overlaps with known loci
 
 def blat(genome_file, hairpin_file):
-	out_file = f"{output_name}.psl"
+	out_file = f"{output_dir}/blat_output.psl"
 
 	if not isfile(out_file):
 		call = f"blat {genome_file} {hairpin_file} -out=psl -q=rna {out_file}" 
@@ -95,7 +135,6 @@ def blat(genome_file, hairpin_file):
 
 
 	return(out_file)
-
 
 
 print()
@@ -115,11 +154,7 @@ lines = [l + [int(l[10]) - int(l[0])] for l in lines]
 lines.sort(key=lambda x: float(x[-1]), reverse=False)
 
 
-# for i, h in enumerate(header):
-# 	print(i, h)
-
-
-hp_bed = f"{output_name}.hps.bed"
+hp_bed = f"{output_dir}/hairpins.bed"
 
 with open(hp_bed, 'w') as outf:
 	found_queries = set()
@@ -139,7 +174,7 @@ with open(hp_bed, 'w') as outf:
 
 
 
-results_bed = f"{output_name}.results.bed"
+results_bed = f"{output_dir}/results.bed"
 with open(results_bed, 'w') as outf:
 	with open(results_file, 'r') as f:
 		for line in f:
@@ -154,9 +189,6 @@ with open(results_bed, 'w') as outf:
 
 
 				print(chrom, start, stop, name, sep='\t', file=outf)
-
-
-# bedtools intersect -a sly.hps.bed -b sly.results.bed -wb -f .5
 
 
 def intersect(results_bed, hp_bed):
@@ -187,18 +219,13 @@ def intersect(results_bed, hp_bed):
 blat_d = intersect(results_bed, hp_bed)
 
 
+
+
+
+### Blasting the results hairpins against the known miRNA hairpins
+
 def faidx(locus, file):
 
-	# if not isfile(file+".fai"):
-	# 	print("indexing genome...")
-	# 	call = f"samtools faidx {file}"
-
-	# 	p = Popen(call.split(), stdout=PIPE, stderr=PIPE, encoding='utf-8')
-
-	# 	out, err = p.communicate()
-
-	# 	print(out)
-	# 	print(err)
 
 	call = f"samtools faidx {file} {locus}"
 
@@ -226,7 +253,7 @@ def counter_check(i, total, interval):
 	elif i == total-1:
 		print('  100')
 
-shortstack_fasta = f"{output_name}.results.fa"
+shortstack_fasta = f"{output_dir}/results.fa"
 
 
 with open(results_file, 'r') as f:
@@ -274,7 +301,7 @@ def best_blast_hit(shortstack_fasta, hp_fasta):
 		sys.exit(err)
 
 
-	blast_file = f"{output_name}.blast.txt"
+	blast_file = f"{output_dir}/blast.txt"
 	with open(blast_file, 'w') as outf:
 		print(header.replace(" ", "\t"), file=outf)
 		outf.write(out)
@@ -308,6 +335,8 @@ blast_d = best_blast_hit(shortstack_fasta, hairpin_file)
 
 
 
+### Looking for exact matches in major RNA sequence
+
 mature_d = {}
 with open(mature_file.replace("\ ", " "), 'r') as f:
 	for line in f:
@@ -319,7 +348,7 @@ with open(mature_file.replace("\ ", " "), 'r') as f:
 			mature_d[seq] = header
 
 
-output_file = f"{output_name}.updated_results.txt"
+output_file = f"{output_dir}/updated_results.txt"
 with open(output_file, 'w') as outf:
 	with open(results_file, 'r') as f:
 		for line in f:
