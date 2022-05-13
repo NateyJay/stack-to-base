@@ -31,14 +31,14 @@ parser.add_argument('-p', '--hairpin_files',
 	nargs='+',
 	default = f"{script_dir}/miRBase_files/hairpin.fa",
 	required=False,
-	help='mirbase hairpin sequences in fasta format')
+	help='a list of mirbase hairpin sequence files in fasta format')
 
 parser.add_argument('-m', '--mature_files', 
 	type=str,
 	nargs='+',
 	default = f"{script_dir}/miRBase_files/mature.fa",
 	required=False,
-	help='mirbase mature sequences in fasta format')
+	help='a list of mirbase mature sequence files in fasta format')
 
 parser.add_argument('-o', '--output_dir', 
 	type=str,
