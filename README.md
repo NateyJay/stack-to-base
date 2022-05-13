@@ -45,6 +45,12 @@ Check the help document for syntax information:
 The tool simply takes the Results.txt output from a ShortStack run and the genome used to perform the annotation. An output name is supplied to handle intermediate files. 
 
     stack-to-base.py -r example/Results.txt -g ~/+Genomes/Plant_genomes/Solyc.chromosomes.4.00.fa -o test_output
+    
+A possibly better way to use this tool is to include non-mirbase annotations as well. These can be submitted as more arguments for the -m (Mature) and -p (hairPin) options.
+
+    stack-to-base.py -r example/Results.txt -g ~/+Genomes/Plant_genomes/Solyc.chromosomes.4.00.fa -o test_output \
+        -m miRBase21.mature.fa Lunardon2020.mature.fa \
+        -p miRBase21.hairpin.fa Lunardon2020.hairpin.fa
 
 
 
