@@ -8,9 +8,9 @@ This tool is in development, it is likely that many of the options and outputs m
 [ShortStack](https://github.com/MikeAxtell/ShortStack) is a powerful tool for sRNA-seq analysis. It produces an annotation, including high-precision predictions of miRNAs. However, precision comes with a trade-off of sensitivity and loci which contain miRNAs may not always be identified as such. It can also be useful to find family names associated with a sRNA locus. This tool is meant to bridge that gap and help identify loci that might be overlooked otherwise.
 
 This tool uses 3 approaches to search for miRBase miRNA loci all with varying degrees of sensitivity.  
-• Exact mature miRNA matches between a submitted miRNAs and MajorRNAs from ShortStack (the most precise).
-• Genomic overlap of BLAT alignment of submitted hairpins vs ShortStack annotated loci.  
-• BLAST alignment of ShortStack annotated loci vs submitted hairpins.  
+* Exact mature miRNA matches between a submitted miRNAs and MajorRNAs from ShortStack (the most precise).  
+* Genomic overlap of BLAT alignment of submitted hairpins vs ShortStack annotated loci.   
+* BLAST alignment of ShortStack annotated loci vs submitted hairpins.  
 
 Using these 3 approaches, it can find what family members are most similar to a locus and give a strong inference what miRNA families might be contained in a locus.  
 
