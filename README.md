@@ -46,7 +46,7 @@ The tool simply takes the Results.txt output from a ShortStack run and the genom
 
     stack-to-base.py -r example/Results.txt -g ~/+Genomes/Plant_genomes/Solyc.chromosomes.4.00.fa -o test_output
     
-A possibly better way to use this tool is to include non-mirbase annotations as well, for example those found in [Lunardon et al 2020](http://dx.doi.org/10.1101/gr.256750.119) found on the [plant small RNA genes server](https://plantsmallrnagenes.science.psu.edu/index.php). These can be submitted as more arguments for the -m (Mature) and -p (hairPin) options.
+A possibly better way to use this tool is to include non-mirbase annotations as well, for example those found in [Lunardon et al 2020](http://dx.doi.org/10.1101/gr.256750.119) hosted on the [plant small RNA genes server](https://plantsmallrnagenes.science.psu.edu/index.php). These can be submitted as more arguments for the -m (Mature) and -p (hairPin) options.
 
     stack-to-base.py -r example/Results.txt -g ~/+Genomes/Plant_genomes/Solyc.chromosomes.4.00.fa -o test_output \
         -m miRBase21.mature.fa Lunardon2020.mature.fa \
