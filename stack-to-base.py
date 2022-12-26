@@ -195,6 +195,7 @@ def intersect(results_bed, hp_bed):
 
 	call = f"bedtools intersect -a {hp_bed} -b {results_bed} -wb -f .5"
 
+
 	p = Popen(call.split(), stdout=PIPE, stderr=PIPE, encoding='utf-8')
 
 	out, err = p.communicate()
